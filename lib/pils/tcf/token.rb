@@ -18,47 +18,35 @@
 # You should have received a copy of the GNU General Public License
 # along with pils.  If not, see <http://www.gnu.org/licenses/>.
 
-require "pils/version"
-require 'pils/structures'
-require 'pils/parsing'
-require 'pils/de'
-require 'pils/tcf'
-
-
-# The pils module is the overall container for all code snippets,
-# classes and methods that deal with linguistic modelling.
 module Pils
-  # Your code goes here...
+  module Tcf
 
-  # The output stream used for pils-internal writing.
-  def self.out
-    @out
-  end
+    class Token < BoundedElement
 
-  def self.out=(new_out)
-    @out=new_out
-  end
+      attr_accessor :pos
+      attr_accessor :lemma
+      attr_accessor :previous_token
+      attr_accessor :next_token
 
-  def self.err
-    @err
-  end
+      def initialize(tcf_document, xml_element)
+        @tcf_document = tcf_document
+        @xml_element = xml_element
+        @pos, @lemma, @previous_token, @next_token = nil
+      end
 
-  def self.err=(new_err)
-    @err=new_err
-  end
+      def form
+        @form ||= CGI.unescapeHTML(@xml_element.text)
+      end
 
-  def self.log(msg, stream=:err)
-    if stream==:err && !self.err.nil?
-      self.err << msg
-      self.err << "\n"
+      def pos?
+        not pos.nil?
+      end
+
+      def lemma?
+        not lemma.nil?
+      end
+
     end
-    if stream==:out && !self.out.nil?
-      self.out << msg
-      self.out << "\n"
-    end
+
   end
-
-  self.out=nil#STDOUT
-  self.err=nil#STDERR
-
 end
