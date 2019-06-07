@@ -18,47 +18,29 @@
 # You should have received a copy of the GNU General Public License
 # along with pils.  If not, see <http://www.gnu.org/licenses/>.
 
-require "pils/version"
-require 'pils/structures'
-require 'pils/parsing'
-require 'pils/de'
-require 'pils/tcf'
-
-
-# The pils module is the overall container for all code snippets,
-# classes and methods that deal with linguistic modelling.
 module Pils
-  # Your code goes here...
+  module Tcf
 
-  # The output stream used for pils-internal writing.
-  def self.out
-    @out
-  end
+    class BoundedElement
 
-  def self.out=(new_out)
-    @out=new_out
-  end
+      attr_accessor :begin_index
+      attr_accessor :end_index
 
-  def self.err
-    @err
-  end
 
-  def self.err=(new_err)
-    @err=new_err
-  end
+      def boundaries=(new_boundaries)
+        @begin_index=new_boundaries.first
+        @end_index=new_boundaries.last
+      end
 
-  def self.log(msg, stream=:err)
-    if stream==:err && !self.err.nil?
-      self.err << msg
-      self.err << "\n"
-    end
-    if stream==:out && !self.out.nil?
-      self.out << msg
-      self.out << "\n"
+      def boundaries?
+        @begin_index && @end_index
+      end
+
+      def length
+        end_index - begin_index
+      end
+
     end
   end
-
-  self.out=nil#STDOUT
-  self.err=nil#STDERR
 
 end

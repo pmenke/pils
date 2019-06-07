@@ -18,47 +18,20 @@
 # You should have received a copy of the GNU General Public License
 # along with pils.  If not, see <http://www.gnu.org/licenses/>.
 
-require "pils/version"
-require 'pils/structures'
-require 'pils/parsing'
-require 'pils/de'
-require 'pils/tcf'
-
-
-# The pils module is the overall container for all code snippets,
-# classes and methods that deal with linguistic modelling.
 module Pils
-  # Your code goes here...
+  module Tcf
 
-  # The output stream used for pils-internal writing.
-  def self.out
-    @out
   end
-
-  def self.out=(new_out)
-    @out=new_out
-  end
-
-  def self.err
-    @err
-  end
-
-  def self.err=(new_err)
-    @err=new_err
-  end
-
-  def self.log(msg, stream=:err)
-    if stream==:err && !self.err.nil?
-      self.err << msg
-      self.err << "\n"
-    end
-    if stream==:out && !self.out.nil?
-      self.out << msg
-      self.out << "\n"
-    end
-  end
-
-  self.out=nil#STDOUT
-  self.err=nil#STDERR
-
 end
+
+require "pils/tcf/annotation"
+require "pils/tcf/bounded_element"
+require "pils/tcf/geo_annotation"
+require "pils/tcf/named_entity_annotation"
+require "pils/tcf/sentence"
+require "pils/tcf/tcf_document"
+require "pils/tcf/token"
+require "pils/tcf/transform/transformer"
+
+
+
