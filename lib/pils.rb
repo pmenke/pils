@@ -58,7 +58,7 @@ module Pils
     end
   end
 
-  self.out=nil#STDOUT
+  self.out=STDOUT#nil#STDOUT
   self.err=nil#STDERR
 
 end

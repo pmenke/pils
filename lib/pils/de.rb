@@ -21,3 +21,4 @@ module Pils
 end
 
 require "pils/de/small"
+require "pils/de/skeleton"
