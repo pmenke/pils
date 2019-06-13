@@ -28,6 +28,10 @@ module Pils
       MOD = %w(imp ind) # [:imp, :fin, :inf]
       TMP = %w(pres)
       VAL = %w(t0 tdir tind tdirind)
+      
+      ADJ_SUFFIXES_WEAK = %w(e en en en en en en en)
+      ADJ_SUFFIXES_STRONG = %w(er en em en e er er e es en em es) 
+      ADJ_SUFFIXES_STRONG_PLURAL = %w(e er en e)
 
       def self.add_german_verb(lex, grundform, zweitform, praetform, partform, valence, semantic_component)
         lex.add_wordform Wordform.new(normalize_forms("#{grundform}e"),   "V_fin_sg_1_pres_#{valence}".to_sym,   {}, semantic_component.clone )
@@ -56,6 +60,23 @@ module Pils
         lex.add_wordform(Wordform.new(forms[5], "N_gen_pl_#{gender}_3".to_sym, {}, semantic_component.clone.merge({number: :plural}) ))
         lex.add_wordform(Wordform.new(forms[6], "N_dat_pl_#{gender}_3".to_sym, {}, semantic_component.clone.merge({number: :plural}) ))
         lex.add_wordform(Wordform.new(forms[7], "N_acc_pl_#{gender}_3".to_sym, {}, semantic_component.clone.merge({number: :plural}) ))
+      end
+      
+      # adds adjective forms in a simple way
+      # e.g., we do not distinguish starke und schwache Flexion in the category
+      def self.add_german_adjective(lex, stamm, semantic_component)
+        CAS.each_with_index do |k,x|
+          GEN.each_with_index do |g,z|
+            NUM.each_with_index do |n,y|
+              suff = ADJ_SUFFIXES_WEAK[x+y*4]
+              lex.add_wordform(Wordform.new(normalize_forms("#{stamm}#{suff}"), "ADJA_#{k}_#{n}_#{g}_3".to_sym, {}, semantic_component.clone))
+            end
+            suff = ADJ_SUFFIXES_STRONG[x+z*4]
+            lex.add_wordform(Wordform.new(normalize_forms("#{stamm}#{suff}"), "ADJA_#{k}_sg_#{g}_3".to_sym, {}, semantic_component.clone))
+            suff = ADJ_SUFFIXES_STRONG_PLURAL[x]
+            lex.add_wordform(Wordform.new(normalize_forms("#{stamm}#{suff}"), "ADJA_#{k}_pl_#{g}_3".to_sym, {}, semantic_component.clone))
+          end
+        end
       end
 
       def self.normalize_forms(form)
@@ -109,7 +130,12 @@ module Pils
                 g.rules << r
                 r = Rule.new(Cat.new("NPX_#{cas}_#{num}_#{gen}_3".to_sym), [ Cat.new("N_#{cas}_#{num}_#{gen}_3".to_sym)], {})
                 g.rules << r
-                r = Rule.new(Cat.new("NPX_#{cas}_#{num}_#{gen}_3".to_sym), [ Cat.new("ADJA_#{cas}_#{num}_#{gen}_3".to_sym), Cat.new("NPX_#{cas}_#{num}_#{gen}_3".to_sym)], {})
+                #r = Rule.new(Cat.new("NPX_#{cas}_#{num}_#{gen}_3".to_sym), [ Cat.new("ADJA_#{cas}_#{num}_#{gen}_3".to_sym, :attrib), Cat.new("NPX_#{cas}_#{num}_#{gen}_3".to_sym)], {})
+                #g.rules << r
+                
+                r = Rule.new(Cat.new("NPX_#{cas}_#{num}_#{gen}_3".to_sym), [ Cat.new("AP_#{cas}_#{num}_#{gen}_3".to_sym, :attrib), Cat.new("NPX_#{cas}_#{num}_#{gen}_3".to_sym)], {})
+                g.rules << r
+                r = Rule.new(Cat.new("AP_#{cas}_#{num}_#{gen}_3".to_sym), [ Cat.new("ADJA_#{cas}_#{num}_#{gen}_3".to_sym)], {})
                 g.rules << r
               #end
             end
