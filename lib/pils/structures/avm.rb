@@ -45,7 +45,8 @@ module Pils
           return self[key.to_s]
         end
       end
-
+      
+      
       def <(other)
         self.keys.each do |k|
           if other.has_key?(k)
@@ -77,10 +78,16 @@ module Pils
         self.keys.each do |k|
           sym_key = k.to_sym
           # Pils::log "   key: %s" % k
-          # Pils::log "     a: %s" % self.get(k)
+          Pils::log "     a: %s" % self[k]
           if other.has_key?(k.to_sym) || other.has_key?(k.to_s)
-            # Pils::log "     b: %s" % other.get(k)
-            return false if self.get(k) != other.get(k)
+            Pils::log "     b: %s" % other[k]
+            if self[k].kind_of?(Hash) && other[k].kind_of?(Hash)
+              return false if !(self[k].fits_to_describe(other[k]))
+            else
+              return false if self[k] != other[k]
+            end
+          else
+            return false
           end
         end
         return true
