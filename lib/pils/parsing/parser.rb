@@ -42,7 +42,7 @@ module Pils
         @token_position = 0
         # syntactic state
         #   set state to first start symbol, stack to remaining start symbols
- 
+
         @syntax = Tree.new(@grammar.starting_cats.first, nil) # Pils::Parsing::
         @syntax_position = 0
 
@@ -50,6 +50,8 @@ module Pils
         @semantics = {}
         # stack
         @stack = []
+
+        Pils::log @tokens
       end
 
       def word_substitutions
@@ -122,7 +124,9 @@ module Pils
       def parse!(max_iterations=50)
         @result = true
         @iter = 0
-        while (@result===true || @result===false) && @iter<max_iterations
+        puts @token_position
+        puts @tokens
+        while (@result===true || @result===false) && (@tokens.size-@token_position>=1) && @iter<max_iterations
           @result = parse
           @iter = @iter + 1
           # Pils::log ''
@@ -170,7 +174,7 @@ module Pils
           # Pils::log "  %2i %s" % [u, current_leaf]
           # Pils::log "      %s" % [u, current_leaf.obj]
         end
-        # stack: 
+        # stack:
         # Pils::log "STACK:"
         #@stack.each do |n|
         #  Pils::log "    -- %2i %2i %s" % [n[2], n[3], n[0].display]

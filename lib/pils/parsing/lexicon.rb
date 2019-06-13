@@ -66,14 +66,19 @@ module Pils
 
       def get(params={})
         temp = @entries
-        Pils::log ">>>> " +  temp.to_a.collect{|a| ("%s(%s)" % [a.form,a.cat])}.join(', ')
+        # Pils::log ">>>> " +  temp.to_a.collect{|a| ("%s(%s)" % [a.form,a.cat])}.join(', ')
         return {} if (temp.empty? || params[:form] =~ /^\s*$/ )
-        if params.has_key?(:form)
-          Pils::log "§FORM"
-          temp = temp.select{|t| t.form.downcase==params[:form].downcase}
+        if params.has_key?(:form) && !(params[:form].nil?)
+          # Pils::log "§FORM"
+          # temp.each do |t|
+          #   puts t
+          #   puts t.form
+          # end
+          # puts params[:form]
+          temp = temp.select{|t| !(t.form.nil?) && t.form.downcase==params[:form].downcase}
         end
-        if params.has_key?(:cat)
-          Pils::log "§CAT"
+        if params.has_key?(:cat) && !(params[:cat].nil?)
+          # Pils::log "§CAT"
           temp = temp.select{|t| t.cat==params[:cat]}
         end
         if params.has_key?(:grammar)
@@ -82,8 +87,8 @@ module Pils
         end
         temp
       end
-      
-      
+
+
       def describe
         @entries.each do |entry|
           Pils::log "// %s" % [entry.display.to_s]
